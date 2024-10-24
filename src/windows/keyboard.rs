@@ -1,6 +1,6 @@
 use crate::rdev::{EventType, Key, KeyboardState};
 use crate::windows::common::{get_code, get_scan_code, FALSE, TRUE};
-use crate::windows::keycodes::code_from_key;
+use crate::windows::keycodes::virtcode_from_key;
 use std::ptr::null_mut;
 use winapi::shared::minwindef::{BYTE, HKL, LPARAM, UINT};
 use winapi::um::processthreadsapi::GetCurrentThreadId;
@@ -146,7 +146,7 @@ impl KeyboardState for Keyboard {
                     None
                 }
                 key => {
-                    let code = code_from_key(*key)?;
+                    let code = virtcode_from_key(*key)?;
                     unsafe { self.get_code_name(code.into(), 0) }
                 }
             },
