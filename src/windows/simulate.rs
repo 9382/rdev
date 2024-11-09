@@ -9,9 +9,8 @@ use winapi::um::winuser::{
     GetSystemMetrics, INPUT_u, SendInput, INPUT, INPUT_KEYBOARD, INPUT_MOUSE, KEYBDINPUT,
     KEYEVENTF_KEYUP, KEYEVENTF_EXTENDEDKEY, MOUSEEVENTF_ABSOLUTE, MOUSEEVENTF_HWHEEL,
     MOUSEEVENTF_LEFTDOWN, MOUSEEVENTF_LEFTUP, MOUSEEVENTF_MIDDLEDOWN, MOUSEEVENTF_MIDDLEUP,
-    MOUSEEVENTF_MOVE, MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP, MOUSEEVENTF_VIRTUALDESK,
-    MOUSEEVENTF_WHEEL, MOUSEEVENTF_XDOWN, MOUSEEVENTF_XUP, MOUSEINPUT, SM_CXVIRTUALSCREEN,
-    SM_CYVIRTUALSCREEN, WHEEL_DELTA,
+    MOUSEEVENTF_MOVE, MOUSEEVENTF_RIGHTDOWN, MOUSEEVENTF_RIGHTUP, MOUSEEVENTF_WHEEL,
+    MOUSEEVENTF_XDOWN, MOUSEEVENTF_XUP, MOUSEINPUT, SM_CXSCREEN, SM_CYSCREEN, WHEEL_DELTA,
 };
 /// Not defined in win32 but define here for clarity
 static KEYEVENTF_KEYDOWN: DWORD = 0;
@@ -120,14 +119,14 @@ pub fn simulate(event_type: &EventType) -> Result<(), SimulateError> {
             Ok(())
         }
         EventType::MouseMove { x, y } => {
-            let width = unsafe { GetSystemMetrics(SM_CXVIRTUALSCREEN) };
-            let height = unsafe { GetSystemMetrics(SM_CYVIRTUALSCREEN) };
+            let width = unsafe { GetSystemMetrics(SM_CXSCREEN) };
+            let height = unsafe { GetSystemMetrics(SM_CYSCREEN) };
             if width == 0 || height == 0 {
                 return Err(SimulateError);
             }
 
             sim_mouse_event(
-                MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_VIRTUALDESK,
+                MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE,
                 0,
                 (*x as i32 + 1) * 65535 / width,
                 (*y as i32 + 1) * 65535 / height,
